@@ -1,0 +1,49 @@
+FROM ubuntu:16.04
+MAINTAINER rookiecj <rookiecj@gmail.com>
+
+# esp open sdk
+RUN apt-get update && apt-get install -yq \
+    make unrar-free autoconf automake libtool gcc g++ gperf \
+    flex bison texinfo gawk ncurses-dev libexpat-dev python-dev python python-serial \
+    sed git unzip bash help2man wget bzip2
+
+   
+# missing dependencies
+RUN apt-get install -yq \
+    build-essential \
+    libtool-bin \
+    python-pip \
+    sudo \
+    tmux \
+    vim 
+
+# nodemcu
+RUN apt-get install -yq srecord bc xz-utils 
+
+# add user esp8266 
+RUN useradd -s /bin/bash -m -G plugdev,dialout esp8266 
+RUN echo "esp8266 ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/esp8266
+RUN chmod 0440 /etc/sudoers.d/esp8266
+
+USER esp8266
+ENV HOME=/home/esp8266
+# host share folder
+RUN ln -s /docker $HOME/docker
+
+
+# use esp-open-sdk on host shared folder, /docker
+WORKDIR $HOME
+# xtensa-lx106-elf-gcc -I/home/esp8266/docker/esp-open-sdk/sdk/include -L/home/esp8266/docker/esp-open-sdk/sdk/lib
+
+#WORKDIR $HOME
+#RUN git clone https://github.com/pfalcon/esp-open-sdk.git --recursive
+#WORKDIR $HOME/esp-open-sdk
+# To build the bare Xtensa toolchain and leave ESP8266 SDK separate:
+#RUN make STANDALONE=n
+#ENV PATH=$PATH:$HOME/esp-open-sdk/xtensa-lx106-elf/bin
+#ENV ESP_OPEN_SDK=$HOME/esp-open-sdk
+#ENV CPATH=$ESP_OPEN_SDK/sdk/include
+#ENV LD_LIBRARY_PATH=$ESP_OPEN_SDK/sdk/lib
+
+WORKDIR $HOME
+ENTRYPOINT /bin/bash
