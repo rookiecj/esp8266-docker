@@ -23,11 +23,11 @@ ENTRYPOINT ["/tini", "--"]
 
 
 # esp open sdk
-RUN apt-get update && apt-get install -yq \
+RUN apt-get update 
+RUN apt-get install -yq \
     make unrar-free autoconf automake libtool gcc g++ gperf \
     flex bison texinfo gawk ncurses-dev libexpat-dev python-dev python python-serial \
     sed git unzip bash help2man wget bzip2
-
    
 # missing dependencies
 RUN apt-get install -yq \
@@ -40,6 +40,9 @@ RUN apt-get install -yq \
 
 # nodemcu
 RUN apt-get install -yq srecord bc xz-utils 
+
+# general utilities
+RUN apt-get install -yq usbutils
 
 # add user esp8266 
 RUN useradd -s /bin/bash -m -G plugdev,dialout esp8266 
